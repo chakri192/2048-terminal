@@ -1,31 +1,32 @@
 # 2048 Terminal
 
-A command-line implementation of the popular 2048 sliding block puzzle game for macOS.
+A vibrant, colored terminal implementation of the popular 2048 sliding block puzzle game for macOS. Pure terminal gameplay with beautiful ANSI color tiles.
 
 ---
 
 ## Overview
 
-Combine tiles with the same number to create larger numbers and reach the 2048 tile to win. Simple rules, addictive gameplay, pure terminal fun.
+Combine tiles with the same number to create larger numbers and reach the 2048 tile to win. Simple rules, addictive gameplay, beautiful terminal colors, and zero dependencies.
 
 ---
 
 ## Features
 
+- **Colored Tiles** — Each tile value has a unique color scheme matching the original 2048 game
 - **Pure Terminal Gameplay** — no GUI, lightweight, fast
-- **Score Tracking** — keep track of your best scores
+- **Score Tracking** — keep track of your points in real-time
 - **Move Counter** — see how many moves you've made
 - **Win Condition** — reach 2048 to win (or continue playing)
 - **Game Over Detection** — automatic detection when no more moves are available
 - **Random Tile Spawning** — 90% chance of 2, 10% chance of 4
-- **Zero Dependencies** — pure Python 3 implementation
+- **Zero Dependencies** — pure Python 3 implementation, no external packages
 
 ---
 
 ## Requirements
 
 - **Python** 3.6 or higher
-- **macOS** terminal with `clear` command
+- **macOS** terminal with ANSI color support
 - No external dependencies
 
 ---
@@ -64,10 +65,10 @@ python3 game2048.py
 
 | Key | Action |
 |-----|--------|
-| `W` | Move tiles up |
-| `A` | Move tiles left |
-| `S` | Move tiles down |
-| `D` | Move tiles right |
+| `W` or `↑` | Move tiles up |
+| `A` or `←` | Move tiles left |
+| `S` or `↓` | Move tiles down |
+| `D` or `→` | Move tiles right |
 | `Q` | Quit game |
 
 ---
@@ -75,41 +76,50 @@ python3 game2048.py
 ## How to Play
 
 1. Start with two random tiles (valued 2 or 4)
-2. Use WASD to move tiles in the grid
+2. Use WASD or arrow keys to move tiles in the grid
 3. When two tiles with the same number touch, they merge into one
 4. Each merge adds to your score
 5. Try to create a tile with the value 2048 to win
 6. After winning, continue playing for higher scores
-7. Game ends when no more moves are available
+7. Game ends when you can no longer make any valid moves
 
 ---
 
-## Example Gameplay
+## Color Scheme
 
-```
-===================================
-           2048 TERMINAL
-===================================
-Score: 2,304 | Moves: 28
------------------------------------
-|   32 |  128 |  256 | 1024 |
-|   16 |   64 |  512 |    4 |
-|    8 |    4 |    2 |      |
-|    4 |      |      |      |
------------------------------------
-Controls: W(up) S(down) A(left) D(right) Q(quit)
-===================================
-```
+Each tile has a unique color:
+
+- **2** — Light beige
+- **4** — Beige
+- **8** — Orange
+- **16** — Dark orange
+- **32** — Red
+- **64** — Dark red
+- **128** — Gold
+- **256** — Dark gold
+- **512** — Golden
+- **1024** — Dark golden
+- **2048+** — Bright gold
 
 ---
 
 ## Architecture
 
-**Single-file implementation** (~200 lines)
+**Single-file implementation** (~280 lines)
 
 - `Game2048` class — core game logic, grid management, tile merging
+- `Color` class — ANSI color codes for terminal coloring
 - `Direction` enum — movement directions (WASD)
 - `main()` — game loop and input handling
+
+---
+
+## Performance
+
+- **Startup:** Instant
+- **Responsiveness:** Real-time input handling
+- **Memory:** < 1MB
+- **CPU:** Minimal usage
 
 ---
 
@@ -122,3 +132,9 @@ macOS · Python 3 · Tested on M1/M4 MacBook Air
 ## License
 
 MIT
+
+---
+
+## Author
+
+Created by [chakri192](https://github.com/chakri192)
