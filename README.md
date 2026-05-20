@@ -129,12 +129,6 @@ macOS · Python 3 · Tested on M1/M4 MacBook Air
 
 ---
 
-## License
-
-MIT
-
----
-
 ## Author
 
 Created by [chakri192](https://github.com/chakri192)
