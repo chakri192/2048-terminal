@@ -1,7 +1,7 @@
-# 2048 Terminal
+# 2048 
 
 <div align="center">
-  <img src="demo.gif" alt="2048 Terminal Gameplay" width="600" />
+  <img src="demo.gif" alt="2048-terminal Gameplay" width="600" />
   <p><em>2048 Terminal Demo</em></p>
 </div>
 
