@@ -1,4 +1,4 @@
-# 2048 
+# 2048-terminal
 
 <div align="center">
   <img src="demo.gif" alt="2048-terminal Gameplay" width="600" />
