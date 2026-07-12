@@ -2,7 +2,7 @@
 
 <div align="center">
   <img src="demo.gif" alt="2048-terminal Gameplay" width="600" />
-  <p><em>2048 Terminal Demo</em></p>
+  <p><em>2048-terminal Demo</em></p>
 </div>
 
 
