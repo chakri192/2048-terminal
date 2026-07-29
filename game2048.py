@@ -12,7 +12,7 @@ class Color:
     """ANSI color codes for terminal"""
     RESET = '\033[0m'
     BOLD = '\033[1m'
-    
+
     # Background colors
     BG_EMPTY = '\033[48;2;100;100;100m'      # Gray
     BG_2 = '\033[48;2;238;228;218m'          # Light beige
@@ -155,10 +155,10 @@ class Game2048:
         """Execute move and add new tile."""
         if self.game_over or self.won:
             return False
-        
+
         grid_copy = copy.deepcopy(self.grid)
         self._move(direction)
-        
+
         if grid_copy != self.grid:
             self._add_random_tile()
             self.moves += 1
@@ -173,7 +173,7 @@ class Game2048:
                 if self.grid[i][j] == 2048 and not self.won:
                     self.won = True
                     return
-        
+
         if not any(self._can_move(d) for d in Direction):
             self.game_over = True
 
@@ -195,15 +195,15 @@ class Game2048:
     def display(self):
         """Display the game board with colors."""
         os.system('clear')
-        
-        print(f"\n{Color.TEXT_WHITE}{Color.BOLD}2048.c{Color.RESET}".ljust(25) + 
+
+        print(f"\n{Color.TEXT_WHITE}{Color.BOLD}2048.c{Color.RESET}".ljust(25) +
               f"{Color.TEXT_WHITE}{self.score} pts{Color.RESET}\n")
-        
+
         for row in self.grid:
             for tile in row:
                 print(self._format_tile(tile), end=" ")
             print()
-        
+
         print(f"\n{Color.TEXT_WHITE}←,↑,→,↓ or q{Color.RESET}\n")
 
     def reset(self):
@@ -214,15 +214,15 @@ class Game2048:
 def main():
     """Main game loop."""
     game = Game2048()
-    
+
     try:
         while True:
             game.display()
-            
+
             if game.game_over:
                 print(f"{Color.TEXT_WHITE}GAME OVER! Final Score: {game.score}{Color.RESET}")
                 break
-            
+
             if game.won:
                 choice = input(f"{Color.TEXT_WHITE}YOU WIN! Continue? (y/n): {Color.RESET}").lower()
                 if choice == 'n':
@@ -231,13 +231,13 @@ def main():
                 else:
                     game.won = False
                     continue
-            
+
             move = input(f"{Color.TEXT_WHITE}Move (w/a/s/d) or q: {Color.RESET}").lower()
-            
+
             if move == 'q':
                 print(f"{Color.TEXT_WHITE}Final Score: {game.score}{Color.RESET}")
                 break
-            
+
             try:
                 direction = Direction(move)
                 if not game.move(direction):
@@ -246,7 +246,7 @@ def main():
             except ValueError:
                 print(f"{Color.TEXT_WHITE}Invalid input!{Color.RESET}")
                 input("Press Enter to continue...")
-    
+
     except KeyboardInterrupt:
         print(f"\n{Color.TEXT_WHITE}Game interrupted. Final Score: {game.score}{Color.RESET}")
         sys.exit(0)
