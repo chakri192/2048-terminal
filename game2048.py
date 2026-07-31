@@ -78,9 +78,12 @@ class Game2048:
     def _can_move(self, direction):
         """Check if a move is possible."""
         grid_copy = copy.deepcopy(self.grid)
+        score_copy = self.score  # _move -> _merge mutates score; restore it so
+                                 # probing for possible moves can't inflate it
         self._move(direction)
         can_move = grid_copy != self.grid
         self.grid = grid_copy
+        self.score = score_copy
         return can_move
 
     def _move(self, direction):
