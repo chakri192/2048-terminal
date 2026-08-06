@@ -109,6 +109,10 @@ Text flips from dark to light at `8`, which is where the backgrounds get dark en
 
 ---
 
-## Author
 
-[chakri192](https://github.com/chakri192) · tested on macOS, Apple Silicon
+## Contributors
+
+| | |
+|---|---|
+| [chakri192](https://github.com/chakri192) | Author |
+| [aider](https://github.com/Aider-AI/aider) | AI pair programmer |
