@@ -1,156 +1,119 @@
+<div align="center">
+
 # 2048-terminal
 
-<div align="center">
-  <img src="demo.gif" alt="2048-terminal Gameplay" width="600" />
-  <p><em>2048-terminal Demo</em></p>
+**The sliding-block puzzle, in true colour, in your terminal.**
+
+One Python file, no dependencies, no curses — just 24-bit ANSI and the standard library.
+
+<p>
+  <img alt="Python" src="https://img.shields.io/badge/Python-3.6%2B-1c1c1e?style=flat-square&logo=python&logoColor=3776AB" />
+  <img alt="Dependencies" src="https://img.shields.io/badge/dependencies-none-1c1c1e?style=flat-square" />
+  <img alt="Size" src="https://img.shields.io/badge/259-lines-1c1c1e?style=flat-square" />
+  <img alt="Colour" src="https://img.shields.io/badge/24--bit-truecolor-1c1c1e?style=flat-square" />
+</p>
+
+<br />
+
+<img src="demo.gif" alt="2048-terminal gameplay" width="620" />
+
 </div>
 
-
-A vibrant, colored terminal implementation of the popular 2048 sliding block puzzle game for macOS. Pure terminal gameplay with beautiful ANSI color tiles.
-
----
-
-## Overview
-
-Combine tiles with the same number to create larger numbers and reach the 2048 tile to win. Simple rules, addictive gameplay, beautiful terminal colors, and zero dependencies.
+<br />
 
 ---
 
-## Features
-
-- **Colored Tiles** — Each tile value has a unique color scheme matching the original 2048 game
-- **Pure Terminal Gameplay** — no GUI, lightweight, fast
-- **Score Tracking** — keep track of your points in real-time
-- **Move Counter** — see how many moves you've made
-- **Win Condition** — reach 2048 to win (or continue playing)
-- **Game Over Detection** — automatic detection when no more moves are available
-- **Random Tile Spawning** — 90% chance of 2, 10% chance of 4
-- **Zero Dependencies** — pure Python 3 implementation, no external packages
-
----
-
-## Requirements
-
-- **Python** 3.6 or higher
-- **macOS** terminal with ANSI color support
-- No external dependencies
-
----
-
-## Installation
+## Play it
 
 ```bash
 git clone https://github.com/chakri192/2048-terminal.git
 cd 2048-terminal
-chmod +x game2048.py
+python3 game2048.py
 ```
 
-Add to your PATH in `~/.zshenv`:
+Nothing to install. Python 3.6 or newer, and a terminal that does 24-bit colour — Terminal.app, iTerm2, Alacritty, kitty, WezTerm, and modern Windows Terminal all qualify.
 
-```sh
-export PATH="$HOME/path/to/2048-terminal:$PATH"
-```
-
-Or create an alias:
-
-```sh
-alias 2048="python3 ~/.2048-terminal/game2048.py"
-```
-
----
-
-## Usage
+Want it on your `$PATH`?
 
 ```bash
-python3 game2048.py
+chmod +x game2048.py
+ln -s "$PWD/game2048.py" /usr/local/bin/2048
 ```
 
 ---
 
 ## Controls
 
+Type a letter, then press **Enter**.
+
 | Key | Action |
-|-----|--------|
-| `W` or `↑` | Move tiles up |
-| `A` or `←` | Move tiles left |
-| `S` or `↓` | Move tiles down |
-| `D` or `→` | Move tiles right |
-| `Q` | Quit game |
+|---|---|
+| `w` | Up |
+| `a` | Left |
+| `s` | Down |
+| `d` | Right |
+| `q` | Quit, and print your final score |
+
+Input is line-buffered, so every move needs a Return. Arrow keys aren't wired up — that would mean putting the terminal into raw mode and parsing escape sequences, which is exactly the dependency-free simplicity this trades away. `Ctrl-C` quits cleanly and still reports your score.
+
+Reach 2048 and it asks whether to keep going; answer `y` and play on for a higher tile.
 
 ---
 
-## How to Play
+## How the board actually moves
 
-1. Start with two random tiles (valued 2 or 4)
-2. Use WASD or arrow keys to move tiles in the grid
-3. When two tiles with the same number touch, they merge into one
-4. Each merge adds to your score
-5. Try to create a tile with the value 2048 to win
-6. After winning, continue playing for higher scores
-7. Game ends when you can no longer make any valid moves
+<div align="center">
+<img src="docs/merge.svg" width="840" alt="A row moving left: compress, merge, pad — and how the other three directions reuse the same three steps" />
+</div>
 
----
+The whole game is three functions applied to one row:
 
-## Color Scheme
+```python
+line = self._compress(self.grid[i])      # [2,0,2,4] → [2,2,4]     drop the gaps
+line = self._merge(line)                 # [2,2,4]   → [4,4]       combine, +4 score
+self.grid[i] = self._pad_line(line, 4)   # [4,4]     → [4,4,0,0]   refill to width
+```
 
-Each tile has a unique color:
+Everything else is bookkeeping around that. `RIGHT` is `LEFT` on a reversed row, reversed back. `UP` is the same pipeline over a column. `DOWN` is a reversed column. Four directions, one algorithm, no special cases.
 
-- **2** — Light beige
-- **4** — Beige
-- **8** — Orange
-- **16** — Dark orange
-- **32** — Red
-- **64** — Dark red
-- **128** — Gold
-- **256** — Dark gold
-- **512** — Golden
-- **1024** — Dark golden
-- **2048+** — Bright gold
+**Merged tiles are locked for the rest of the move.** `_merge` advances by two after combining a pair, so `[2,2,4]` becomes `[4,4]` and not `[8]`. Skip that detail and the game becomes trivially easy — it's the rule that makes 2048 a puzzle instead of a pile.
+
+**Legality is decided by simulation.** `_can_move` deep-copies the grid, plays the move, and asks whether anything changed. There's a subtlety in there: `_merge` bumps `self.score` as a side effect, so a probe would quietly award points for moves you never made. It saves and restores the score around the trial.
+
+Game over is that same check run four times — when no direction changes the grid, there are no moves left.
 
 ---
 
-## Architecture
+## The colours
 
-**Single-file implementation** (~280 lines)
+Every tile value gets the palette from the original browser game, emitted as true-colour ANSI (`\033[48;2;R;G;Bm`) rather than the 16-colour approximations most terminal ports settle for:
 
-- `Game2048` class — core game logic, grid management, tile merging
-- `Color` class — ANSI color codes for terminal coloring
-- `Direction` enum — movement directions (WASD)
-- `main()` — game loop and input handling
+| Tile | Colour | | Tile | Colour |
+|---|---|---|---|---|
+| `2` | light beige | | `128` | gold |
+| `4` | beige | | `256` | deeper gold |
+| `8` | orange | | `512` | golden |
+| `16` | dark orange | | `1024` | dark golden |
+| `32` | red | | `2048` | bright gold |
+| `64` | dark red | | above | dark slate |
 
----
-
-## Performance
-
-- **Startup:** Instant
-- **Responsiveness:** Real-time input handling
-- **Memory:** < 1MB
-- **CPU:** Minimal usage
+Text flips from dark to light at `8`, which is where the backgrounds get dark enough to need it.
 
 ---
 
-## Environment
+## Layout
 
-macOS · Python 3 · Tested on M1/M4 MacBook Air
+```
+2048-terminal/
+├── game2048.py    Color · Direction · Game2048 · main      259 lines
+├── demo.gif
+└── docs/          the diagram in this README
+```
+
+`Game2048` holds the grid, score, move count, and win/over flags. New tiles spawn on a random empty cell — 90% a `2`, 10% a `4`, same odds as the original.
 
 ---
 
 ## Author
 
-Created by [chakri192](https://github.com/chakri192)
-
-## Contributors
-
-| Contributor | Role |
-|-------------|------|
-| [chakri192](https://github.com/chakri192) | Author |
-| [aider](https://github.com/Aider-AI/aider) | AI pair programmer |
-
-### AI tooling
-
-README and code contributions assisted by [aider](https://github.com/Aider-AI/aider) using local LLMs via [Ollama](https://ollama.com):
-
-| Model | Used for |
-|-------|----------|
-| `qwen2.5-coder:7b` | Code suggestions, refactoring |
-| `llama3.1:8b` | Prose, documentation, commit messages |
+[chakri192](https://github.com/chakri192) · tested on macOS, Apple Silicon
