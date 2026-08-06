@@ -62,10 +62,6 @@ Reach 2048 and it asks whether to keep going; answer `y` and play on for a highe
 
 ## How the board actually moves
 
-<div align="center">
-<img src="docs/merge.svg" width="840" alt="A row moving left: compress, merge, pad — and how the other three directions reuse the same three steps" />
-</div>
-
 The whole game is three functions applied to one row:
 
 ```python
@@ -106,8 +102,7 @@ Text flips from dark to light at `8`, which is where the backgrounds get dark en
 ```
 2048-terminal/
 ├── game2048.py    Color · Direction · Game2048 · main      259 lines
-├── demo.gif
-└── docs/          the diagram in this README
+└── demo.gif
 ```
 
 `Game2048` holds the grid, score, move count, and win/over flags. New tiles spawn on a random empty cell — 90% a `2`, 10% a `4`, same odds as the original.
