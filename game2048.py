@@ -65,6 +65,7 @@ class Game2048:
         self.moves = 0
         self.game_over = False
         self.won = False
+        self.keep_playing = False   # set once the player chooses to continue past 2048
         self._add_random_tile()
         self._add_random_tile()
 
@@ -156,7 +157,7 @@ class Game2048:
 
     def move(self, direction):
         """Execute move and add new tile."""
-        if self.game_over or self.won:
+        if self.game_over or (self.won and not self.keep_playing):
             return False
 
         grid_copy = copy.deepcopy(self.grid)
@@ -171,11 +172,9 @@ class Game2048:
 
     def _check_game_state(self):
         """Check if game is won or over."""
-        for i in range(self.size):
-            for j in range(self.size):
-                if self.grid[i][j] == 2048 and not self.won:
-                    self.won = True
-                    return
+        if not self.keep_playing and any(2048 in row for row in self.grid):
+            self.won = True
+            return
 
         if not any(self._can_move(d) for d in Direction):
             self.game_over = True
@@ -184,22 +183,22 @@ class Game2048:
         """Get color for a tile value."""
         if value in self.COLOR_MAP:
             return self.COLOR_MAP[value]
-        return self.COLOR_MAP.get(2048, (Color.BG_HIGH, Color.TEXT_WHITE))
+        return (Color.BG_HIGH, Color.TEXT_WHITE)
 
     def _format_tile(self, value):
         """Format a tile with color."""
         bg, text = self._get_color(value)
         if value == 0:
-            return f"{bg}   {Color.RESET}"
+            return f"{bg}    {Color.RESET}"
         else:
-            tile_str = str(value).rjust(3)
+            tile_str = str(value).rjust(4)
             return f"{bg}{text}{tile_str}{Color.RESET}"
 
     def display(self):
         """Display the game board with colors."""
         os.system('clear')
 
-        print(f"\n{Color.TEXT_WHITE}{Color.BOLD}2048.c{Color.RESET}".ljust(25) +
+        print(f"\n{Color.TEXT_WHITE}{Color.BOLD}2048{Color.RESET}".ljust(25) +
               f"{Color.TEXT_WHITE}{self.score} pts{Color.RESET}\n")
 
         for row in self.grid:
@@ -207,7 +206,7 @@ class Game2048:
                 print(self._format_tile(tile), end=" ")
             print()
 
-        print(f"\n{Color.TEXT_WHITE}←,↑,→,↓ or q{Color.RESET}\n")
+        print(f"\n{Color.TEXT_WHITE}w/a/s/d to move, q to quit{Color.RESET}\n")
 
     def reset(self):
         """Reset the game."""
@@ -232,6 +231,7 @@ def main():
                     print(f"{Color.TEXT_WHITE}Final Score: {game.score}{Color.RESET}")
                     break
                 else:
+                    game.keep_playing = True
                     game.won = False
                     continue
 
